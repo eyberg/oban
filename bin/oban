@@ -1,12 +1,23 @@
 #!/usr/bin/ruby
 require 'yaml'
+require 'oban/colorify'
 
 class Oban
+  include Colorify
+
   attr_accessor :config
   attr_accessor :heroku_remote
 
   def initialize
-    self.config = YAML::load(File.open(ENV['HOME']+'/.repos.yml') { |f| @stuff = f.read })
+    conf_file = ENV['HOME'] + '/.oban.yml'
+
+    unless FileTest.exist?(conf_file)
+      puts colorRed('Missing Conf File!')
+      puts colorRed('\tPlease copy oban.yml.example to ~/.oban.yml and edit')
+      exit
+    end
+
+    self.config = YAML::load(File.open(conf_file) { |f| @stuff = f.read })
     
     # grab config for current repository (based on github)
     current = `git remote show origin | grep Fetch`
@@ -21,20 +32,20 @@ class Oban
     end
 
     unless !remote.empty?
-      puts "Could not Find Remote! Sorry"
+      puts colorRed("Could not Find Remote! Sorry")
       exit
     end
 
     self.heroku_remote = remote
 
-    puts "using #{heroku_remote}"
+    puts colorBlue("using #{heroku_remote}")
   end
 
   def push
     # switch to master before anything else
     `git checkout master`
 
-    puts 'deploying'
+    puts colorBlue('deploying')
 
     # make sure we have config/s3.yml
     # make sure we have config/mongo.yml
@@ -83,7 +94,7 @@ class Oban
     `git push --force heroku HEAD:master`
 
     # add back in our submodules
-    puts 'switching back to master'
+    puts colorBlue('switching back to master')
     `git checkout master`
     `git submodule init`
     `git submodule update`
