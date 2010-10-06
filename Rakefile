@@ -6,5 +6,5 @@ task :build do
 end
  
 task :release => :build do
-  system "gem push oban-#{Oban::VERSION}"
+  system "gem push oban-#{Oban::VERSION}.gem"
 end
