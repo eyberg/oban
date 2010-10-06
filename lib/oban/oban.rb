@@ -20,6 +20,11 @@ class Oban
     # grab config for current repository (based on github)
     current = `git remote show origin | grep Fetch`
 
+    unless !current.empty? then
+      puts colorRed("Not a git repository!")
+      exit
+    end
+
     current = current.split("URL:").last.strip
     remote = ""
 
