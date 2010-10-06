@@ -5,6 +5,7 @@ class Oban
 
   attr_accessor :config
   attr_accessor :heroku_remote
+  attr_accessor :submods  # TODO: should be a list eventually
 
   def initialize
     conf_file = ENV['HOME'] + '/.oban.yml'
@@ -16,7 +17,7 @@ class Oban
     end
 
     self.config = YAML::load(File.open(conf_file) { |f| @stuff = f.read })
-    
+
     # grab config for current repository (based on github)
     current = `git remote show origin | grep Fetch`
 
@@ -42,7 +43,35 @@ class Oban
 
     self.heroku_remote = remote
 
+    set_submods
+
     puts colorBlue("using #{heroku_remote}")
+  end
+
+  # only supports one right now -- FIXME
+  def set_submods
+    submods = `git submodule status`
+
+    if !submods.empty?
+      self.submods = submods.split[1]
+    
+      puts colorBlue("found submodule: #{self.submods}")
+    end
+
+  end
+
+  def rm_submods
+    # rm git modules
+    `rm -rf .gitmodules`
+
+    puts colorBlue("removing submodule: #{self.submods}")
+    `rm -rf #{self.submods}/.git`
+
+    `git rm --cached #{self.submods}`
+  end
+
+  def add_submod_data
+    `git add #{self.submods}`
   end
 
   def push
@@ -66,31 +95,16 @@ class Oban
     `git branch deploy`
     `git checkout deploy`
 
-    # rm git modules
-    # needs to be refactored a bit better
-    `rm -rf .gitmodules`
-
-    #`rm -rf app/models/shared/.git`
-    `rm -rf app/models/.git`
-
-    `git rm --cached app/models`
-
-    #`git rm --cached app/models`
-    #`git rm --cached app/models/shared`
-
-    # Time.now.to_i hack?
-
-    `git add app/models`
-
-    #`rm -rf \`find . -mindepth 2 -name .git\``
-    #`git add .`
+    if !self.submods.nil? then
+      rm_submods
+      add_submod_data
+    end
 
     # only add remotes if necessary
     remotes = `git remote`
 
     if remotes.match('heroku').nil? then
-      heroku_remote = ""
-      `git remote add heroku #{heroku_remote}`
+      `git remote add heroku #{self.heroku_remote}`
     end
 
     `git commit -a -m "deploying"`
