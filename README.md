@@ -13,3 +13,5 @@ submodules
   me@myhost:~/my_proj$ oban
 
 ####TODO:
+  * testing!
+  * support for multiple submodules (right now it only does one)
