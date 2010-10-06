@@ -1,0 +1,3 @@
+marketplace_admin:
+  heroku: git@heroku.com:marketplace-admin.git
+  github: git@github.com:seeinginteractive/Marketplace-admin.git

@@ -1,0 +1,15 @@
+ABOUT:
+
+oban hopes to simplify the deploy process for apps on heroku that use
+submodules
+
+INSTALL:
+  cp oban /usr/bin/.
+
+Example Deploy:
+  me@myhost:~/my_proj$ oban
+
+TODO:
+  * first commit of course looks like shit
+  * have to manually specify heroku remote for now in oban
+  * creds file doesn't quite work yet as it needs to be in same directory
