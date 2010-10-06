@@ -1,3 +1,6 @@
-my_proj:
-  heroku: git@heroku.com:my_proj.git
-  github: git@github.com:me/my_proj.git
+-
+  heroku: git@heroku.com:my_app1.git
+  github: git@github.com:me/my_app1.git
+-
+  heroku: git@heroku.com:my_app2.git
+  github: git@github.com:me/my_app2.git
