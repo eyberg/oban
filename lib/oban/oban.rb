@@ -116,6 +116,10 @@ class Oban
     `git checkout master`
     `git submodule init`
     `git submodule update`
+
+    # ensure we checkout master (cause it'll default to headless)
+    `git --git-dir=#{self.submods}/.git checkout master`
+
   end
 
 end
