@@ -8,15 +8,8 @@ class Oban
   attr_accessor :submods  # TODO: should be a list eventually
 
   def initialize
-    conf_file = ENV['HOME'] + '/.oban.yml'
 
-    unless FileTest.exist?(conf_file)
-      puts colorRed('Missing Conf File!')
-      puts colorRed('\tPlease copy oban.yml.example to ~/.oban.yml and edit')
-      exit
-    end
-
-    self.config = YAML::load(File.open(conf_file) { |f| @stuff = f.read })
+    set_config
 
     # grab config for current repository (based on github)
     current = `git remote show origin | grep Fetch`
@@ -46,6 +39,29 @@ class Oban
     set_submods
 
     puts colorBlue("using #{heroku_remote}")
+  end
+
+  def set_config
+    home_conf_file = ENV['HOME'] + '/.oban.yml'
+    cwd_conf_file = '.oban.yml'
+
+    g2g = false
+
+    if FileTest.exist?(home_conf_file) then
+      self.config = YAML::load(File.open(home_conf_file) { |f| @stuff = f.read })
+      g2g = true
+    end
+
+    if FileTest.exist?(cwd_conf_file) then
+      self.config = YAML::load(File.open(cwd_conf_file) { |f| @stuff = f.read })
+      g2g = true
+    end
+
+    unless g2g
+      puts colorRed("Missing Conf File!")
+      puts colorRed("\tPlease copy oban.yml.example to ~/.oban.yml or project_root and edit")
+      exit
+    end
   end
 
   # only supports one right now -- FIXME
