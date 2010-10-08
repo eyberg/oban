@@ -13,7 +13,6 @@ submodules
   me@myhost:~/my_proj$ oban
 
 ####TODO:
-  * look for config in CWD as well as HOME
   * be able to deploy in any directory of the project
   * right now if you have a fairly large repo it can take some time to
     upload -- I'd like to get rid of the push --force hack and do some
