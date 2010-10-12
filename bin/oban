@@ -4,4 +4,15 @@ require 'oban'
 require 'oban/colorify'
 
 oban = Oban.new
-oban.push
+
+if ARGV[0].nil? then
+  oban.show_help
+else
+  arg = ARGV[0]
+  case arg
+    when "--help" then oban.show_help
+    when "deploy" then oban.deploy
+    when "rollback" then oban.rollback
+    when "push" then oban.push
+  end 
+end
