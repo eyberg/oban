@@ -143,6 +143,15 @@ class Oban
     `git add #{self.submods}`
   end
 
+  def wipe_deploy
+    # test to see if deploy exists.. wipe it if it does..
+    branches = `git branch`
+
+    if !branches.match('deploy').nil? then
+      `git branch -D deploy`
+    end
+  end
+
   def deploy
 
     real_init
@@ -155,12 +164,7 @@ class Oban
     # might need to change the logic on this to do reset --hard and
     # friends so we don't clobber the remote deploy branch
 
-    # test to see if deploy exists.. wipe it if it does..
-    branches = `git branch`
-
-    if !branches.match('deploy').nil? then
-      `git branch -D deploy`
-    end
+    wipe_deploy
 
     # create new branch then checkout
     `git branch deploy`
@@ -173,8 +177,9 @@ class Oban
 
     `git commit -a -m "deploying"`
 
+    # let's not track this for now
     # push to deploy branch first
-    `git push origin +deploy`
+    #`git push origin +deploy`
 
     # btw --force should NEVER be used (except for this case) ;)
     `git push --force heroku HEAD:master`
@@ -185,6 +190,8 @@ class Oban
 
     reinit_submods
 
+    # wipe deploy again for now
+    wipe_deploy
   end
 
 end
